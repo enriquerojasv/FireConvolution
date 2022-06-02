@@ -14,21 +14,18 @@ import javax.imageio.ImageIO;
  */
 public final class Fire {
 
-    //THREAD
     boolean running;
     boolean paused;
-
     int fps;
     Thread fireThread;
-
     BufferedImage image;
-    BufferedImage default_img;
+    BufferedImage defaultImg;
 
     ;
     public Fire(FireConvolution PRUEBA) {
         this.PRUEBA = PRUEBA;
         try {
-            this.default_img = ImageIO.read(new File("src\\images\\blackBG.png"));
+            this.defaultImg = ImageIO.read(new File("src\\images\\blackBG.png"));
         } catch (IOException ex) {
             System.out.println(ex);
         }
@@ -65,7 +62,7 @@ public final class Fire {
 
             this.temperature = new int[WIDTH][HEIGHT];
 
-            this.image_buffer = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+            this.imageBuffer = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
 
             this.flame_i = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
             this.buffer = ((DataBufferByte) flame_i.getRaster().getDataBuffer()).getData();
@@ -73,8 +70,7 @@ public final class Fire {
             while (running) {
                 try {
                     if (!paused) {
-                        //FIRE HERE
-                        if (apply_conv) {
+                        if (applyConv) {
                             this.image = PRUEBA.viewer.getConvBg();
                             imageSparks();
                         } else {
@@ -91,11 +87,11 @@ public final class Fire {
                 }
             }
             System.out.println("a");
-            this.flame_i = this.default_img;
+            this.flame_i = this.defaultImg;
         });
 
     }
-    //FIRE
+    
     FireConvolution PRUEBA;
     ColorPalette palette;
 
@@ -105,20 +101,20 @@ public final class Fire {
 
     BufferedImage flame_i;
     byte[] buffer;
-    byte[] image_buffer;
+    byte[] imageBuffer;
 
     float cooling = 0.1f;
-    int spark_chance = 30;
+    int sparkChance = 30;
 
     Random rand = new Random();
 
     int tolerance = 100;
 
-    boolean apply_conv = false;
+    boolean applyConv = false;
 
-    public void setApply_conv(boolean apply_conv) {
+    public void setApplyConv(boolean applyConv) {
         this.flame_i = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
-        this.apply_conv = apply_conv;
+        this.applyConv = applyConv;
     }
 
     public BufferedImage getFlame_i() {
@@ -130,8 +126,8 @@ public final class Fire {
         this.cooling = (float) cooling;
     }
 
-    public void setSpark_chance(int spark_chance) {
-        this.spark_chance = spark_chance;
+    public void setSparkChance(int sparkChance) {
+        this.sparkChance = sparkChance;
     }
 
     public void setTolerance(int tolerance) {
@@ -143,7 +139,6 @@ public final class Fire {
     }
 
     private void calcular(int[][] temperature) {
-
         int up;
         int left;
         int right;
@@ -159,46 +154,36 @@ public final class Fire {
                 down = temperature[i + 1][j];
 
                 int avg = (up + left + right + down) / 4;
-
                 avg -= cooling;
 
                 if (avg < 0) {
                     avg = 0;
                 }
-
                 temp[i][j - 1] = avg;
-
             }
         }
-
         System.arraycopy(temp, 0, temperature, 0, temp.length);
-
     }
 
     public void flameEvolve() {
-
         calcular(this.temperature);
 
         for (int x = 0; x < temperature.length; x++) {
             for (int y = 0; y < temperature[0].length; y++) {
                 flame_i.setRGB(x, y, palette.getColor(temperature[x][y]).getRGB());
-
             }
         }
     }
 
     public void createSparks() {
-
         for (int x = 0; x < temperature.length; x++) {
             for (int y = 0; y < temperature[0].length; y++) {
-
+                
                 if (y == this.HEIGHT - 2) {
                     int random = rand.nextInt(100);
 
-                    if (random <= spark_chance) {
-
+                    if (random <= sparkChance) {
                         temperature[x][y] = 255;
-
                     }
                 }
             }
@@ -210,17 +195,13 @@ public final class Fire {
 
         for (int x = 0; x < temperature.length; x++) {
             for (int y = 0; y < temperature[0].length; y++) {
-
                 pixel_color = new Color(image.getRGB(x, y), true);
 
                 if (pixel_color.getRed() + pixel_color.getGreen() + pixel_color.getBlue() / 3 >= tolerance) {
-
                     int random = rand.nextInt(100);
 
-                    if (random <= spark_chance) {
-
+                    if (random <= sparkChance) {
                         temperature[x][y] = 255;
-
                     }
                 }
             }

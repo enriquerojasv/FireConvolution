@@ -35,52 +35,49 @@ public class ControlPanel extends JPanel implements ActionListener, ChangeListen
     private JButton play;
     private JButton pause;
     private JButton stop;
-    private JButton apply_filter;
+    private JButton applyFilter;
     private JButton palette;
     private JButton color1;
     private JButton color2;
     private JButton color3;
     private JButton color4;
     private JButton color5;
-    private JButton apply_custom;
+    private JButton applyCustom;
 
     private JLabel controls;
     private JLabel sparksLabel;
     private JLabel filters;
     private JLabel colors;
-    private JLabel cool_label;
+    private JLabel coolLabel;
     private JLabel empty1;
     private JLabel empty2;
     private JLabel empty3;
     private JLabel empty4;
     private JLabel empty5;
 
-    private JSlider fps_slider;
-    private JSlider tolerance_slider;
     private JSlider sparkSlider;
 
-    private JCheckBox apply_conv;
+    private JCheckBox applyConv;
 
     private JSpinner cool;
 
-    String[] filter_options = {"Vertical", "Horizontal", "SobelVertical", "SobelHorizontal", "ScharrVertical", "ScharrHorizontal"};
+    String[] filterOptions = {"Vertical", "Horizontal", "SobelVertical", "SobelHorizontal", "ScharrVertical", "ScharrHorizontal"};
     JComboBox<String> dropdown;
-    String[] filter_palette = {"Default", "BubbleGum", "Inverted", "Phantom"};
-    JComboBox<String> palette_dropdown;
+    String[] filterPalette = {"Default", "BubbleGum", "Inverted", "Phantom"};
+    JComboBox<String> paletteDropdown;
 
     private JFileChooser fileExplorer;
 
-    private final FireConvolution fireConvolution;
+    private final FireConvolution FIRE_CONVOLUTION;
     Fire fire;
 
-    int fire_fps;
-    int fire_tolerance;
+    int fireFps;
     int fireSparks;
 
     BufferedImage image;
 
     public ControlPanel(FireConvolution fireConvolution) {
-        this.fireConvolution = fireConvolution;
+        this.FIRE_CONVOLUTION = fireConvolution;
         this.fire = fireConvolution.fire;
         this.setLayout(new GridBagLayout());
 
@@ -97,18 +94,18 @@ public class ControlPanel extends JPanel implements ActionListener, ChangeListen
         this.pause = new JButton("Pause");
         this.stop = new JButton("Stop");
 
-        this.sparksLabel = new JLabel("SPARKS (1-99)");
+        this.sparksLabel = new JLabel("SPARKS & COOLING");
 
         this.filters = new JLabel("FILTERS");
-        this.dropdown = new JComboBox<>(filter_options);
-        this.apply_filter = new JButton("Apply");
+        this.dropdown = new JComboBox<>(filterOptions);
+        this.applyFilter = new JButton("Apply");
 
-        this.cool_label = new JLabel("Cooling (0-3)");
+        this.coolLabel = new JLabel("Cooling (0-3)");
         this.cool = new JSpinner(new SpinnerNumberModel(2, 0, 3, 0.05));
 
-        this.apply_conv = new JCheckBox("Apply Convolution", false);
+        this.applyConv = new JCheckBox("Apply Convolution", false);
 
-        this.palette_dropdown = new JComboBox<>(filter_palette);
+        this.paletteDropdown = new JComboBox<>(filterPalette);
         this.palette = new JButton("Apply");
 
         this.colors = new JLabel("COLORS");
@@ -123,14 +120,15 @@ public class ControlPanel extends JPanel implements ActionListener, ChangeListen
         this.empty3 = new JLabel();
         this.empty4 = new JLabel();
         this.empty5 = new JLabel();
-        this.apply_custom = new JButton("Apply Custom Palette");
+        this.applyCustom = new JButton("Apply Custom");
 
         initSliders();
 
-        this.positionComponent(0, 1, 3, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), c, load);
+        this.positionComponent(0, 1, 3, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), c, controls);
+
+        this.positionComponent(0, 2, 3, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), c, load);
         this.load.addActionListener(this);
 
-        this.positionComponent(0, 2, 3, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), c, controls);
         this.positionComponent(0, 3, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), c, play);
         this.play.addActionListener(this);
         this.positionComponent(1, 3, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), c, pause);
@@ -144,53 +142,53 @@ public class ControlPanel extends JPanel implements ActionListener, ChangeListen
 
         this.positionComponent(0, 6, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), c, cool);
         this.cool.addChangeListener(this);
-        this.positionComponent(1, 6, 2, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), c, cool_label);
+        this.positionComponent(1, 6, 2, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), c, coolLabel);
 
         this.positionComponent(0, 12, 3, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), c, colors);
 
-        this.positionComponent(0, 13, 2, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), c, palette_dropdown);
+        this.positionComponent(0, 13, 2, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), c, paletteDropdown);
         this.positionComponent(2, 13, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), c, palette);
         this.palette.addActionListener(this);
 
-        this.positionComponent(0, 14, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 0, 0), c, color1);
-        this.empty1.setBackground(Color.BLACK);
+        this.positionComponent(1, 14, 3, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 0, 0), c, color1);
+        this.empty1.setBackground(Color.RED);
         this.empty1.setOpaque(true);
-        this.positionComponent(1, 14, 3, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 0, 0, 5), c, empty1);
+        this.positionComponent(1, 14, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 0, 0, 5), c, empty1);
         this.color1.addActionListener(this);
 
-        this.positionComponent(0, 15, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), c, color2);
-        this.empty2.setBackground(Color.BLACK);
+        this.positionComponent(1, 15, 3, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), c, color2);
+        this.empty2.setBackground(Color.YELLOW);
         this.empty2.setOpaque(true);
-        this.positionComponent(1, 15, 3, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 5), c, empty2);
+        this.positionComponent(1, 15, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 5), c, empty2);
         this.color2.addActionListener(this);
 
-        this.positionComponent(0, 16, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), c, color3);
-        this.empty3.setBackground(Color.BLACK);
+        this.positionComponent(1, 16, 3, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), c, color3);
+        this.empty3.setBackground(Color.GREEN);
         this.empty3.setOpaque(true);
-        this.positionComponent(1, 16, 3, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 5), c, empty3);
+        this.positionComponent(1, 16, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 5), c, empty3);
         this.color3.addActionListener(this);
 
-        this.positionComponent(0, 17, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), c, color4);
-        this.empty4.setBackground(Color.BLACK);
+        this.positionComponent(1, 17, 3, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), c, color4);
+        this.empty4.setBackground(Color.BLUE);
         this.empty4.setOpaque(true);
-        this.positionComponent(1, 17, 3, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 5), c, empty4);
+        this.positionComponent(1, 17, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 5), c, empty4);
         this.color4.addActionListener(this);
 
-        this.positionComponent(0, 18, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 5, 5, 0), c, color5);
-        this.empty5.setBackground(Color.BLACK);
+        this.positionComponent(1, 18, 3, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 5, 5, 0), c, color5);
+        this.empty5.setBackground(Color.MAGENTA);
         this.empty5.setOpaque(true);
-        this.positionComponent(1, 18, 3, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 5, 5), c, empty5);
+        this.positionComponent(1, 18, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 5, 5), c, empty5);
         this.color5.addActionListener(this);
 
-        this.positionComponent(0, 19, 3, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), c, apply_custom);
-        this.apply_custom.addActionListener(this);
+        this.positionComponent(0, 19, 3, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), c, applyCustom);
+        this.applyCustom.addActionListener(this);
 
         this.positionComponent(0, 20, 3, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(30, 5, 5, 5), c, filters);
         this.positionComponent(0, 21, 2, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), c, dropdown);
-        this.positionComponent(2, 21, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), c, apply_filter);
-        this.apply_filter.addActionListener(this);
-        this.positionComponent(0, 22, 3, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), c, apply_conv);
-        this.apply_conv.addActionListener(this);
+        this.positionComponent(2, 21, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), c, applyFilter);
+        this.applyFilter.addActionListener(this);
+        this.positionComponent(0, 22, 3, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), c, applyConv);
+        this.applyConv.addActionListener(this);
     }
 
     private void positionComponent(int gridx, int gridy, int gridwidth, double weightx,
@@ -234,10 +232,10 @@ public class ControlPanel extends JPanel implements ActionListener, ChangeListen
             g.dispose();
 
             if (image.getHeight(null) <= 0 || image.getWidth(null) <= 0) {
-                fireConvolution.getViewer().setBackground(null);
+                FIRE_CONVOLUTION.getViewer().setBackground(null);
             } else {
 
-                fireConvolution.getViewer().setBackground(image, img_filter);
+                FIRE_CONVOLUTION.getViewer().setBackground(image, img_filter);
             }
         }
     }
@@ -251,20 +249,20 @@ public class ControlPanel extends JPanel implements ActionListener, ChangeListen
 
             this.fire.setRunning(false);
             this.fire.newThread();
-            this.fireConvolution.viewer.setFirst(true);
+            this.FIRE_CONVOLUTION.viewer.setFirst(true);
         }
 
         if (event.getActionCommand().equals("Play")) {
             if (this.image != null) {
 
                 if (!this.fire.fireThread.isAlive()) {
-                    this.fire.setFps(this.fire_fps);
+                    this.fire.setFps(this.fireFps);
                     this.fire.fireThread.start();
                 }
                 this.fire.setRunning(true);
                 this.fire.setPaused(false);
             } else {
-                JOptionPane.showMessageDialog(null, "Load an image first.");
+                JOptionPane.showMessageDialog(null, "Load an image");
             }
         }
 
@@ -275,20 +273,20 @@ public class ControlPanel extends JPanel implements ActionListener, ChangeListen
         if (event.getActionCommand().equals("Stop")) {
             this.fire.setRunning(false);
             this.fire.newThread();
-            this.fireConvolution.viewer.setFirst(true);
+            this.FIRE_CONVOLUTION.viewer.setFirst(true);
         }
 
         if (event.getActionCommand().equals("Apply")) {
-            fireConvolution.getViewer().setBackground(image, checkDropdown(option));
-            this.fireConvolution.viewer.setFirst(true);
+            FIRE_CONVOLUTION.getViewer().setBackground(image, checkDropdown(option));
+            this.FIRE_CONVOLUTION.viewer.setFirst(true);
         }
 
         if (event.getActionCommand().equals("Apply Convolution")) {
-            this.fire.setApply_conv(apply_conv.getModel().isSelected());
+            this.fire.setApplyConv(applyConv.getModel().isSelected());
         }
 
-        option = (String) palette_dropdown.getSelectedItem();
-        if (event.getActionCommand().equals("Apply Palette")) {
+        option = (String) paletteDropdown.getSelectedItem();
+        if (event.getActionCommand().equals("Apply")) {
             this.fire.palette.setColors(option);
         }
 
@@ -317,7 +315,7 @@ public class ControlPanel extends JPanel implements ActionListener, ChangeListen
             this.empty5.setBackground(color);
         }
 
-        if (event.getActionCommand().equals("Apply Custom Palette")) {
+        if (event.getActionCommand().equals("Apply Custom")) {
             Color[] colors = {
                 this.empty1.getBackground(),
                 this.empty2.getBackground(),
@@ -360,20 +358,10 @@ public class ControlPanel extends JPanel implements ActionListener, ChangeListen
         if (event.getSource() instanceof JSlider) {
             JSlider jslider = (JSlider) event.getSource();
 
-            if (jslider == this.fps_slider) {
-
-                this.fire_fps = fps_slider.getValue();
-                this.fire.setFps(this.fire_fps);
-
-            } else if (jslider == this.tolerance_slider) {
-
-                this.fire_tolerance = tolerance_slider.getValue();
-                this.fire.setTolerance(this.fire_tolerance);
-
-            } else if (jslider == this.sparkSlider) {
+            if (jslider == this.sparkSlider) {
 
                 this.fireSparks = sparkSlider.getValue();
-                this.fire.setSpark_chance(this.fireSparks);
+                this.fire.setSparkChance(this.fireSparks);
             }
         }
 

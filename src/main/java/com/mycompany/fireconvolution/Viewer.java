@@ -16,18 +16,14 @@ public class Viewer extends Canvas {
     BufferStrategy bs;
     BufferedImage bg;
     double[][] filter;
-
     Thread viewerThread;
-
     boolean running = false;
-
-    FireConvolution PRUEBA;
-
+    FireConvolution fireConvolution;
     boolean first = true;
 
-    public Viewer(FireConvolution PRUEBA) {
+    public Viewer(FireConvolution fireConvolution) {
         this.setBackground(Color.BLACK);
-        this.PRUEBA = PRUEBA;
+        this.fireConvolution = fireConvolution;
         viewerThread = new Thread(() -> {
             paintViewer();
             while (true) {
@@ -65,34 +61,26 @@ public class Viewer extends Canvas {
         Graphics g = bs.getDrawGraphics();
 
         if (bg != null) {
-
-            //Main Image
             g.drawImage(bg, 0, (int) (this.getHeight() * 0.33), this.getWidth(), (int) (this.getHeight() * 0.67), null);
 
-            //Original Image
             g.drawImage(bg, 0, 0, (int) (this.getWidth() * 0.33), (int) (this.getHeight() * 0.33), null);
 
-            //Conv Image
             if (first == true) {
                 this.convBg = new ImageConvolution(bg, filter).getNew_img();
                 first = false;
             }
             g.drawImage(convBg, (int) (this.getWidth() * 0.33), 0, (int) (this.getWidth() * 0.33), (int) (this.getHeight() * 0.33), null);
 
-            //Fire
-            if (PRUEBA.fire.isRunning()) {
-                BufferedImage fire_bg = PRUEBA.fire.getFlame_i();
-                g.drawImage(PRUEBA.fire.default_img, (int) (this.getWidth() * 0.67), 0, (int) (this.getWidth() * 0.34), (int) (this.getHeight() * 0.33), null);
+            if (fireConvolution.fire.isRunning()) {
+                BufferedImage fire_bg = fireConvolution.fire.getFlame_i();
+                g.drawImage(fireConvolution.fire.defaultImg, (int) (this.getWidth() * 0.67), 0, (int) (this.getWidth() * 0.34), (int) (this.getHeight() * 0.33), null);
                 g.drawImage(fire_bg, (int) (this.getWidth() * 0.67), 0, (int) (this.getWidth() * 0.34), (int) (this.getHeight() * 0.33), null);
                 g.drawImage(fire_bg, 0, (int) (this.getHeight() * 0.33), this.getWidth(), (int) (this.getHeight() * 0.67), null);
             } else {
-                g.drawImage(PRUEBA.fire.default_img, (int) (this.getWidth() * 0.67), 0, (int) (this.getWidth() * 0.34), (int) (this.getHeight() * 0.33), null);
+                g.drawImage(fireConvolution.fire.defaultImg, (int) (this.getWidth() * 0.67), 0, (int) (this.getWidth() * 0.34), (int) (this.getHeight() * 0.33), null);
             }
-
         }
-
         g.dispose();
-
         bs.show();
     }
 
@@ -103,7 +91,6 @@ public class Viewer extends Canvas {
             this.createBufferStrategy(3);
             buffers = this.getBufferStrategy();
         }
-
         if (this.getParent() != null) {
             this.bs = buffers;
         }
