@@ -7,18 +7,35 @@ import java.util.ArrayList;
  *
  * @author rvenr
  */
-public class ColorPalette {    
+public class ColorPalette {
+
     ArrayList<Color> palette = new ArrayList<>();
 
-    Color[] real = {
+    Color[] defaultColor = {
         new Color(0, 0, 0, 0),
-        new Color(180, 40, 0, 150),
-        new Color(255, 130, 0, 175),
-        new Color(250, 240, 20, 200),
+        new Color(225, 32, 0, 150),
+        new Color(238, 130, 23, 175),
+        new Color(255, 227, 45, 200),
         new Color(255, 255, 255, 255)
     };
 
-    Color[] green = {
+    Color[] inverted = {
+        new Color(0, 0, 0, 0),
+        new Color(0, 0, 102, 200),
+        new Color(0, 142, 187, 175),
+        new Color(0, 255, 255, 150),
+        new Color(255, 255, 255, 255)
+    };
+
+    Color[] bubbleGum = {
+        new Color(0, 0, 0, 0),
+        new Color(255, 0, 102, 150),
+        new Color(255, 85, 130, 175),
+        new Color(255, 115, 140, 200),
+        new Color(255, 255, 255, 255)
+    };
+    
+        Color[] phantom = {
         new Color(0, 0, 0, 0),
         new Color(0, 40, 60, 150),
         new Color(30, 130, 80, 175),
@@ -26,39 +43,7 @@ public class ColorPalette {
         new Color(255, 255, 255, 255)
     };
 
-    Color[] blue = {
-        new Color(0, 0, 0, 0),
-        new Color(0, 30, 80, 150),
-        new Color(30, 80, 130, 175),
-        new Color(60, 170, 240, 200),
-        new Color(255, 255, 255, 255)
-    };
-
-    Color[] purple = {
-        new Color(0, 0, 0, 0),
-        new Color(153, 51, 255, 150),
-        new Color(178, 102, 255, 175),
-        new Color(229, 204, 255, 200),
-        new Color(255, 255, 255, 255)
-    };
-
-    Color[] white = {
-        new Color(0, 0, 0, 0),
-        new Color(100, 100, 100, 150),
-        new Color(140, 140, 140, 175),
-        new Color(192, 192, 192, 200),
-        new Color(255, 255, 255, 255)
-    };
-
-    Color[] black = {
-        new Color(0, 0, 0, 0),
-        new Color(25, 25, 25, 150),
-        new Color(50, 50, 50, 175),
-        new Color(75, 75, 75, 200),
-        new Color(100, 100, 100, 255)
-    };
-
-    Color[] colors = real;
+    Color[] colors = defaultColor;
 
     public ColorPalette() {
         usePalette(colors);
@@ -79,9 +64,9 @@ public class ColorPalette {
         double finishA = finishColor.getAlpha();
         double finishR = finishColor.getRed();
         double finishG = finishColor.getGreen();
-        double finishB = finishColor.getBlue();                                
+        double finishB = finishColor.getBlue();
 
-        int blends = 20;
+        int blends = 10;
 
         double blendingA;
         double blendingR;
@@ -97,7 +82,7 @@ public class ColorPalette {
             int resultA = (int) Math.round(startA + (blendingA * i));
             int resultR = (int) Math.round(startR + (blendingR * i));
             int resultG = (int) Math.round(startG + (blendingG * i));
-            int resultB= (int) Math.round(startB + (blendingB * i));
+            int resultB = (int) Math.round(startB + (blendingB * i));
 
             Color result = new Color(resultR, resultG, resultB, resultA);
             this.palette.add(result);
@@ -113,27 +98,23 @@ public class ColorPalette {
     public void setColors(String option) {
         this.palette = new ArrayList<>();
 
-        if (null != option) switch (option) {
-            case "Real":
-                this.colors = this.real;
-                break;
-            case "Green":
-                this.colors = this.green;
-                break;
-            case "Blue":
-                this.colors = this.blue;
-                break;
-            case "Purple":
-                this.colors = this.purple;
-                break;
-            case "White":
-                this.colors = this.white;
-                break;
-            case "Black":
-                this.colors = this.black;
-                break;
-            default:
-                break;
+        if (null != option) {
+            switch (option) {
+                case "Default":
+                    this.colors = this.defaultColor;
+                    break;
+                case "Phantom":
+                    this.colors = this.phantom;
+                    break;
+                case "Inverted":
+                    this.colors = this.inverted;
+                    break;
+                case "BubbleGum":
+                    this.colors = this.bubbleGum;
+                    break;
+                default:
+                    break;
+            }
         }
         usePalette(colors);
     }
@@ -154,7 +135,6 @@ public class ColorPalette {
             color4,
             color5
         };
-        
         usePalette(colorsFinal);
     }
 }
