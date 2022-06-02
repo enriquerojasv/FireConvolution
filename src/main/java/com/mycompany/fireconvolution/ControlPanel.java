@@ -83,10 +83,10 @@ public class ControlPanel extends JPanel implements ActionListener, ChangeListen
 
         GridBagConstraints c = new GridBagConstraints();
 
-        initComponents(c);
+        initializeComponents(c);
     }
 
-    private void initComponents(GridBagConstraints c) {
+    private void initializeComponents(GridBagConstraints c) {
         this.load = new JButton("Load Image");
 
         this.controls = new JLabel("CONTROLS");
@@ -122,7 +122,7 @@ public class ControlPanel extends JPanel implements ActionListener, ChangeListen
         this.empty5 = new JLabel();
         this.applyCustom = new JButton("Apply Custom");
 
-        initSliders();
+        initializeSliders();
 
         this.positionComponent(0, 1, 3, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), c, controls);
 
@@ -205,7 +205,7 @@ public class ControlPanel extends JPanel implements ActionListener, ChangeListen
         this.add(component, c);
     }
 
-    private void initSliders() {
+    private void initializeSliders() {
         this.sparkSlider = new JSlider(1, 100, 5);
         this.sparkSlider.setMinorTickSpacing(10);
         this.sparkSlider.setMajorTickSpacing(49);
@@ -235,7 +235,7 @@ public class ControlPanel extends JPanel implements ActionListener, ChangeListen
                 FIRE_CONVOLUTION.getViewer().setBackground(null);
             } else {
 
-                FIRE_CONVOLUTION.getViewer().setBackground(image, img_filter);
+                FIRE_CONVOLUTION.getViewer().setBg(image, img_filter);
             }
         }
     }
@@ -277,7 +277,7 @@ public class ControlPanel extends JPanel implements ActionListener, ChangeListen
         }
 
         if (event.getActionCommand().equals("Apply")) {
-            FIRE_CONVOLUTION.getViewer().setBackground(image, checkDropdown(option));
+            FIRE_CONVOLUTION.getViewer().setBg(image, checkDropdown(option));
             this.FIRE_CONVOLUTION.viewer.setFirst(true);
         }
 
@@ -287,7 +287,7 @@ public class ControlPanel extends JPanel implements ActionListener, ChangeListen
 
         option = (String) paletteDropdown.getSelectedItem();
         if (event.getActionCommand().equals("Apply")) {
-            this.fire.palette.setColors(option);
+            this.fire.colorPalette.setDefinedColors(option);
         }
 
         if (event.getActionCommand().equals("Color 1")) {
@@ -323,7 +323,7 @@ public class ControlPanel extends JPanel implements ActionListener, ChangeListen
                 this.empty4.getBackground(),
                 this.empty5.getBackground()
             };
-            this.fire.palette.setColors(colors);
+            this.fire.colorPalette.setCustomColors(colors);
         }
 
     }

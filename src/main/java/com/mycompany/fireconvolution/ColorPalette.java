@@ -34,8 +34,8 @@ public class ColorPalette {
         new Color(255, 115, 140, 200),
         new Color(255, 255, 255, 255)
     };
-    
-        Color[] phantom = {
+
+    Color[] phantom = {
         new Color(0, 0, 0, 0),
         new Color(0, 40, 60, 150),
         new Color(30, 130, 80, 175),
@@ -47,6 +47,49 @@ public class ColorPalette {
 
     public ColorPalette() {
         usePalette(colors);
+    }
+
+    public void setDefinedColors(String option) {
+        this.palette = new ArrayList<>();
+
+        if (null != option) {
+            switch (option) {
+                case "Default":
+                    this.colors = this.defaultColor;
+                    break;
+                case "Phantom":
+                    this.colors = this.phantom;
+                    break;
+                case "Inverted":
+                    this.colors = this.inverted;
+                    break;
+                case "BubbleGum":
+                    this.colors = this.bubbleGum;
+                    break;
+                default:
+                    break;
+            }
+        }
+        usePalette(colors);
+    }
+
+    public void setCustomColors(Color[] colorsTemp) {
+        this.palette = new ArrayList<>();
+
+        Color color1 = new Color(colorsTemp[0].getRed(), colorsTemp[0].getGreen(), colorsTemp[0].getBlue(), 0);
+        Color color2 = new Color(colorsTemp[1].getRed(), colorsTemp[1].getGreen(), colorsTemp[1].getBlue(), 150);
+        Color color3 = new Color(colorsTemp[2].getRed(), colorsTemp[2].getGreen(), colorsTemp[2].getBlue(), 175);
+        Color color4 = new Color(colorsTemp[3].getRed(), colorsTemp[3].getGreen(), colorsTemp[3].getBlue(), 200);
+        Color color5 = new Color(colorsTemp[4].getRed(), colorsTemp[4].getGreen(), colorsTemp[4].getBlue(), 255);
+
+        Color[] colorsFinal = {
+            color1,
+            color2,
+            color3,
+            color4,
+            color5
+        };
+        usePalette(colorsFinal);
     }
 
     private void usePalette(Color[] colors) {
@@ -93,48 +136,5 @@ public class ColorPalette {
     public Color getColor(int temperature) {
         int index = Math.round(temperature / (this.colors.length + 1));
         return palette.get(index);
-    }
-
-    public void setColors(String option) {
-        this.palette = new ArrayList<>();
-
-        if (null != option) {
-            switch (option) {
-                case "Default":
-                    this.colors = this.defaultColor;
-                    break;
-                case "Phantom":
-                    this.colors = this.phantom;
-                    break;
-                case "Inverted":
-                    this.colors = this.inverted;
-                    break;
-                case "BubbleGum":
-                    this.colors = this.bubbleGum;
-                    break;
-                default:
-                    break;
-            }
-        }
-        usePalette(colors);
-    }
-
-    public void setColors(Color[] colors_temp) {
-        this.palette = new ArrayList<>();
-
-        Color color1 = new Color(colors_temp[0].getRed(), colors_temp[0].getGreen(), colors_temp[0].getBlue(), 0);
-        Color color2 = new Color(colors_temp[1].getRed(), colors_temp[1].getGreen(), colors_temp[1].getBlue(), 150);
-        Color color3 = new Color(colors_temp[2].getRed(), colors_temp[2].getGreen(), colors_temp[2].getBlue(), 175);
-        Color color4 = new Color(colors_temp[3].getRed(), colors_temp[3].getGreen(), colors_temp[3].getBlue(), 200);
-        Color color5 = new Color(colors_temp[4].getRed(), colors_temp[4].getGreen(), colors_temp[4].getBlue(), 255);
-
-        Color[] colorsFinal = {
-            color1,
-            color2,
-            color3,
-            color4,
-            color5
-        };
-        usePalette(colorsFinal);
     }
 }

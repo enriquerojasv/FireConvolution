@@ -11,6 +11,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
  * @author rvenr
  */
 public class FireConvolution extends JFrame {
+
     ControlPanel controlPanel;
     Viewer viewer;
     Fire fire;
@@ -27,6 +28,18 @@ public class FireConvolution extends JFrame {
                 FireConvolution fireConvolution = new FireConvolution();
             }
         }
+    }
+
+    private void initializeComponents() {
+        this.setSize(800, 800);
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.viewer = new Viewer(this);
+        this.fire = new Fire(this);
+        this.controlPanel = new ControlPanel(this);
+        this.addPanels();
+        this.setLocationRelativeTo(null);
+        this.setVisible(true);
     }
 
     private void addPanels() {
@@ -51,22 +64,6 @@ public class FireConvolution extends JFrame {
     }
 
     public FireConvolution() {
-        initComponents();
-        this.createFire();
-    }
-
-    private void createFire() {
-    }
-
-    private void initComponents() {
-        this.setSize(800, 800);
-        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.viewer = new Viewer(this);
-        this.fire = new Fire(this);
-        this.controlPanel = new ControlPanel(this);
-        this.addPanels();
-        this.setLocationRelativeTo(null);
-        this.setVisible(true);
+        initializeComponents();
     }
 }

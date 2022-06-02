@@ -21,15 +21,14 @@ public final class Fire {
     BufferedImage image;
     BufferedImage defaultImg;
 
-    ;
-    public Fire(FireConvolution PRUEBA) {
-        this.PRUEBA = PRUEBA;
+    public Fire(FireConvolution fireConvolution) {
+        this.fireConvolution = fireConvolution;
         try {
             this.defaultImg = ImageIO.read(new File("src\\images\\blackBG.png"));
         } catch (IOException ex) {
             System.out.println(ex);
         }
-        this.palette = new ColorPalette();
+        this.colorPalette = new ColorPalette();
         newThread();
     }
 
@@ -53,47 +52,8 @@ public final class Fire {
         this.running = running;
     }
 
-    public void newThread() {
-        fireThread = new Thread(() -> {
-            this.image = PRUEBA.viewer.getConvBg();
-
-            this.WIDTH = image.getWidth();
-            this.HEIGHT = image.getHeight();
-
-            this.temperature = new int[WIDTH][HEIGHT];
-
-            this.imageBuffer = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-
-            this.flame_i = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-            this.buffer = ((DataBufferByte) flame_i.getRaster().getDataBuffer()).getData();
-
-            while (running) {
-                try {
-                    if (!paused) {
-                        if (applyConv) {
-                            this.image = PRUEBA.viewer.getConvBg();
-                            imageSparks();
-                        } else {
-                            createSparks();
-                        }
-                        flameEvolve();
-                    }
-                    try {
-                        Thread.sleep(1000 / fps);
-                    } catch (InterruptedException ex) {
-                        System.out.println(ex.getMessage());
-                    }
-                } catch (Exception ex) {
-                }
-            }
-            System.out.println("a");
-            this.flame_i = this.defaultImg;
-        });
-
-    }
-    
-    FireConvolution PRUEBA;
-    ColorPalette palette;
+    FireConvolution fireConvolution;
+    ColorPalette colorPalette;
 
     int WIDTH;
     int HEIGHT;
@@ -138,39 +98,12 @@ public final class Fire {
         this.temperature = new int[WIDTH][HEIGHT];
     }
 
-    private void calcular(int[][] temperature) {
-        int up;
-        int left;
-        int right;
-        int down;
-
-        int[][] temp = new int[temperature.length][temperature[0].length];
-
-        for (int i = 1; i < temperature.length - 1; i++) {
-            for (int j = 1; j < temperature[0].length - 1; j++) {
-                up = temperature[i - 1][j];
-                left = temperature[i][j - 1];
-                right = temperature[i][j + 1];
-                down = temperature[i + 1][j];
-
-                int avg = (up + left + right + down) / 4;
-                avg -= cooling;
-
-                if (avg < 0) {
-                    avg = 0;
-                }
-                temp[i][j - 1] = avg;
-            }
-        }
-        System.arraycopy(temp, 0, temperature, 0, temp.length);
-    }
-
     public void flameEvolve() {
-        calcular(this.temperature);
+        calculate(this.temperature);
 
         for (int x = 0; x < temperature.length; x++) {
             for (int y = 0; y < temperature[0].length; y++) {
-                flame_i.setRGB(x, y, palette.getColor(temperature[x][y]).getRGB());
+                flame_i.setRGB(x, y, colorPalette.getColor(temperature[x][y]).getRGB());
             }
         }
     }
@@ -178,7 +111,7 @@ public final class Fire {
     public void createSparks() {
         for (int x = 0; x < temperature.length; x++) {
             for (int y = 0; y < temperature[0].length; y++) {
-                
+
                 if (y == this.HEIGHT - 2) {
                     int random = rand.nextInt(100);
 
@@ -206,5 +139,70 @@ public final class Fire {
                 }
             }
         }
+    }
+
+    private void calculate(int[][] temperature) {
+        int up;
+        int left;
+        int right;
+        int down;
+
+        int[][] temp = new int[temperature.length][temperature[0].length];
+
+        for (int i = 1; i < temperature.length - 1; i++) {
+            for (int j = 1; j < temperature[0].length - 1; j++) {
+                up = temperature[i - 1][j];
+                left = temperature[i][j - 1];
+                right = temperature[i][j + 1];
+                down = temperature[i + 1][j];
+
+                int avg = (up + left + right + down) / 4;
+                avg -= cooling;
+
+                if (avg < 0) {
+                    avg = 0;
+                }
+                temp[i][j - 1] = avg;
+            }
+        }
+        System.arraycopy(temp, 0, temperature, 0, temp.length);
+    }
+
+    public void newThread() {
+        fireThread = new Thread(() -> {
+            this.image = fireConvolution.viewer.getConvBg();
+
+            this.WIDTH = image.getWidth();
+            this.HEIGHT = image.getHeight();
+
+            this.temperature = new int[WIDTH][HEIGHT];
+
+            this.imageBuffer = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+
+            this.flame_i = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+            this.buffer = ((DataBufferByte) flame_i.getRaster().getDataBuffer()).getData();
+
+            while (running) {
+                try {
+                    if (!paused) {
+                        if (applyConv) {
+                            this.image = fireConvolution.viewer.getConvBg();
+                            imageSparks();
+                        } else {
+                            createSparks();
+                        }
+                        flameEvolve();
+                    }
+                    try {
+                        Thread.sleep(1000 / fps);
+                    } catch (InterruptedException ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                } catch (Exception ex) {
+                }
+            }
+            System.out.println("a");
+            this.flame_i = this.defaultImg;
+        });
     }
 }

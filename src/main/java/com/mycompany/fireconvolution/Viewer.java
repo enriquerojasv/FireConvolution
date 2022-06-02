@@ -28,7 +28,7 @@ public class Viewer extends Canvas {
             paintViewer();
             while (true) {
 
-                setBackground(bg, filter);
+                setBg(bg, filter);
 
                 try {
                     Thread.sleep(1000 / 60);
@@ -39,6 +39,18 @@ public class Viewer extends Canvas {
         });
     }
 
+    private void paintViewer() {
+        BufferStrategy buffers;
+        buffers = this.getBufferStrategy();
+        if (buffers == null) {
+            this.createBufferStrategy(3);
+            buffers = this.getBufferStrategy();
+        }
+        if (this.getParent() != null) {
+            this.bs = buffers;
+        }
+    }
+
     public BufferedImage getConvBg() {
         return convBg;
     }
@@ -47,7 +59,7 @@ public class Viewer extends Canvas {
         this.first = first;
     }
 
-    public void setBackground(BufferedImage img_bg, double[][] img_filter) {
+    public void setBg(BufferedImage img_bg, double[][] img_filter) {
         paintViewer();
 
         this.bg = img_bg;
@@ -84,15 +96,4 @@ public class Viewer extends Canvas {
         bs.show();
     }
 
-    private void paintViewer() {
-        BufferStrategy buffers;
-        buffers = this.getBufferStrategy();
-        if (buffers == null) {
-            this.createBufferStrategy(3);
-            buffers = this.getBufferStrategy();
-        }
-        if (this.getParent() != null) {
-            this.bs = buffers;
-        }
-    }
 }
